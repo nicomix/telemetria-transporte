@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  postgres_db:
+    image: postgres:15-alpine
+    container_name: telemetry_postgres
+    environment:
+      POSTGRES_USER: telemetry_user
+      POSTGRES_PASSWORD: telemetry_password
+      POSTGRES_DB: telemetry_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U telemetry_user -d telemetry_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - telemetry_network
+
+  pipeline:
+    build: .
+    container_name: telemetry_pipeline
+    restart: "no"
+    depends_on:
+      postgres_db:
+        condition: service_healthy
+    environment:
+      - DB_HOST=postgres_db
+      - DB_PORT=5432
+      - DB_NAME=telemetry_db
+      - DB_USER=telemetry_user
+      - DB_PASSWORD=telemetry_password
+    volumes:
+      - ./src:/app/src
+      - ./telemetria.csv:/app/telemetria.csv:ro
+    command: python3 src/procesar_telemetria.py /app/telemetria.csv
+    networks:
+      - telemetry_network
+
+volumes:
+  postgres_data:
+
+networks:
+  telemetry_network:
+    driver: bridge
