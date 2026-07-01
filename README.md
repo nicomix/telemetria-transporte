@@ -15,6 +15,13 @@ Este repositorio contiene la solución a la prueba técnica para el rol. El proy
 
 El proyecto está completamente contenerizado, por lo que no necesita instalar dependencias locales más allá de Docker.
 
+### 0. Preparación del archivo de datos (Requisito Previo)
+Por buenas prácticas de control de versiones y dado el tamaño del archivo generado para esta prueba, los datos crudos no están incluidos en el repositorio.
+
+Antes de ejecutar los contenedores, asegúrate de pegar el archivo provisto por la empresa en la **raíz de este proyecto** y verificar que se llame **exactamente**:
+`telemetria.csv`
+*(Nota: Este nombre exacto es vital para que Docker Compose pueda mapear el volumen correctamente hacia el contenedor del pipeline).*
+
 ### 1. Levantar el pipeline por primera vez
 
 Para construir las imágenes, levantar la base de datos PostgreSQL, ejecutar las migraciones (`schema.sql`) y correr el script de Python automáticamente, ejecuta en la terminal:
