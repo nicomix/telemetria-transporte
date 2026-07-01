@@ -3,7 +3,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE TABLE IF NOT EXISTS quarantine_events (
     id SERIAL PRIMARY KEY,
-    tracking_id VARCHAR(255),
+    tracking_id VARCHAR(255) UNIQUE,
     vehicle_id VARCHAR(255),
     company_id VARCHAR(255),
     route_id VARCHAR(255),
